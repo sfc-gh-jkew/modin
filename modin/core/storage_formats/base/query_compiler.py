@@ -133,6 +133,8 @@ class QCCoercionCost(IntEnum):  # noqa: PR01
     COST_MEDIUM = 500
     COST_HIGH = 750
     COST_IMPOSSIBLE = 1000
+    NO_MAXIMUM_COST = 1000
+    DISABLE_COERCION = 0
 
     @classmethod
     def validate_coersion_cost(cls, cost: QCCoercionCost):
@@ -310,6 +312,27 @@ class BaseQueryCompiler(
         if isinstance(self, other_qc_type):
             return QCCoercionCost.COST_ZERO
         return None
+
+    def qc_max_cost(self) -> int:
+        """
+        Return the maximum acceptable coercsion cost for this query compiler.
+
+        Values returned must be within the acceptable range of
+        QCCoercionCost. QCCoercionCost.NO_MAXIMUM_COST and 
+        QCCoercionCost.DISABLE_COERCION being special enums at the high (1000)
+        and low (0) cost range; effectively limiting how data is moved to
+        other query compilers.
+        
+        Coercion cost includes non-functional attributes such as dataset size
+        and network time. Functional compatibility or datatype compatibility
+        between two engines is a distinct concern.
+
+        Returns
+        -------
+        int
+            Maximum coercion cost accepted by this query compiler
+        """
+        return QCCoercionCost.NO_MAXIMUM_COST
 
     # Abstract Methods and Fields: Must implement in children classes
     # In some cases, there you may be able to use the same implementation for

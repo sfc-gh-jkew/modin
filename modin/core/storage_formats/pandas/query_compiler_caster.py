@@ -93,6 +93,7 @@ class QueryCompilerCasterCalculator:
                 if cost is not None:
                     self._add_cost_data({qc_cls_to: cost})
             self._add_cost_data({type(qc_from): QCCoercionCost.COST_ZERO})
+        
         min_value = min(self._compiler_class_to_cost.values())
         for key, value in self._compiler_class_to_cost.items():
             if min_value == value:
